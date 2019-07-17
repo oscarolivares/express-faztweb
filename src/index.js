@@ -1,18 +1,25 @@
 const express = require('express');
-const morgan = require('morgan')
+const morgan = require('morgan');
+var path = require('path');
 
 const app = express();
 
 
+// Settings
+app.set('appName', 'Fatz express tutorial');
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '/views'));
+
+
+// Middlewares
 // OJO los middleware se usan antes de definir las rutas
 
-// Creando un middleware personalizado
+// Middleware personalizado
 function logger(req, res, next) {
   console.log('Middleware executed');
   console.log(`TargetUrl: ${req.protocol}://${req.get('host')}${req.originalUrl}`);
   next();
 }
-
 // Instanciación del middelware personalizado
 app.use(logger);
 
@@ -25,13 +32,17 @@ app.use(morgan('dev'));
 
 
 
-
+// Routes
 app.get('/', (req, res) => {
-  res.send('<h1>Server ok</h1>')
+  // Simulando una query a la DB
+  const data = [{name: 'john'}, {name: 'joe'}, {name: 'cameron'}];
+
+  // Enviando la query a la plantilla
+  res.render('index.ejs', {people: data});
 })
 
 /* 
-  Se ejecuta para todos los metodos http que coincidan con la ruta, en este caso "/user".
+  La siguiente ruta se ejecuta para todos los metodos http que coincidan con la ruta, en este caso "/user".
   Notar el parámetro "next" se agrega para que tambien ejecute la siguiente coincidencia para /user
   incluyendo "/user |GET", "/user/:id |POST", etc.
 */
@@ -64,7 +75,8 @@ app.post('/user/:id', (req, res) => {
 // Sirviendo archivos estáticos
 app.use(express.static('public'));
 
-
+// Escucha del servidor
 app.listen(3000, () => {
+  console.log(app.get('appName'));
   console.log('Server on port 3000');
 })
