@@ -1,9 +1,19 @@
 const express = require('express');
 const app = express();
 
+// OJO los middleware se usan antes de definir las rutas
 
-// Para que express entienda las peticiones json ejem en: res.body de /user |POST
+// Creando un middleware
+function logger(req, res, next) {
+  console.log('Middleware executed');
+  console.log(`TargetUrl: ${req.protocol}://${req.get('host')}${req.originalUrl}`);
+  next();
+}
+
+// Para que express entienda las peticiones json ejem en: res.body de /user |POST se utiliza el siguiente middleware
 app.use(express.json());
+// Instanciación del middelware
+app.use(logger);
 
 
 app.get('/', (req, res) => {
@@ -15,10 +25,10 @@ app.get('/', (req, res) => {
   Notar el parámetro "next" se agrega para que tambien ejecute la siguiente coincidencia para /user
   incluyendo "/user |GET", "/user/:id |POST", etc.
 */
-app.all('/user', (req, res, next) => {
+/* app.all('/user', (req, res, next) => {
   console.log('Method all for /user was executed');
   next();
-})
+}) */
 
 app.get('/user', (req, res) => {
   res.json({
