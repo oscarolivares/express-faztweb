@@ -61,6 +61,10 @@ app.post('/user/:id', (req, res) => {
 })
 
 
+// Sirviendo archivos estáticos
+app.use(express.static('public'));
+
+
 app.listen(3000, () => {
   console.log('Server on port 3000');
 })
